@@ -13,8 +13,7 @@ For building autonomous AI agents that perform multi-step tasks with tools.
 | Language/Framework | Default | Why |
 |-------------------|---------|-----|
 | **Python** | **Pydantic AI** | Type-safe, Pydantic validation, multi-model, production-ready |
-| **Node.js / Next.js** | **Claude Agent SDK** | Official Anthropic SDK, tools, multi-agent, type-safe |
-| **Frontend UI** | Vercel AI SDK | Streaming UI only (not agentic) |
+| **Node.js / Next.js** | **Claude Agent SDK** | Official Anthropic SDK, tools, multi-agent, native streaming |
 
 ### Python: Pydantic AI (Default)
 ```python
