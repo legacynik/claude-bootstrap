@@ -331,6 +331,123 @@ jobs:
 
 ---
 
+## Deployment Platform Setup
+
+**REQUIRED**: When initializing a project, always create todos for deployment platform connection based on the stack.
+
+### Platform Selection by Stack
+
+| Stack | Default Platform | Action Required |
+|-------|-----------------|-----------------|
+| Next.js / Node.js | **Vercel** | Connect Git repo to Vercel |
+| Python (FastAPI, Flask) | **Render** | Connect Git repo to Render, get API key |
+| Static sites | **Vercel** or **Cloudflare Pages** | Connect Git repo |
+
+### Vercel: Connect Git Repository
+
+When Vercel is the deployment platform, create this todo:
+```
+TODO: Connect Git repository to Vercel for automatic deployments
+```
+
+Steps:
+```bash
+# Option 1: Via CLI
+vercel link
+vercel git connect
+
+# Option 2: Via Dashboard (recommended for first setup)
+# 1. Go to vercel.com/new
+# 2. Import Git repository
+# 3. Configure project settings
+# 4. Deploy
+```
+
+After connecting:
+- Push to `main` → Production deploy
+- Push to other branches → Preview deploy
+- PRs get deploy previews automatically
+
+### Render: Connect Git Repository (Python)
+
+When Render is the deployment platform for Python projects:
+
+**Step 1: Ask user for Render API key**
+```
+Before proceeding, please provide your Render API key.
+Get it from: https://dashboard.render.com/u/settings/api-keys
+
+Store it securely - we'll add it to your environment.
+```
+
+**Step 2: Create todos**
+```
+TODO: Get Render API key from user
+TODO: Connect Git repository to Render
+TODO: Configure Render service (web service or background worker)
+TODO: Set environment variables on Render
+```
+
+**Step 3: Connect via Dashboard (recommended)**
+```bash
+# 1. Go to dashboard.render.com/create
+# 2. Select "Web Service" for APIs, "Background Worker" for async
+# 3. Connect your GitHub/GitLab repository
+# 4. Configure:
+#    - Name: <project-name>
+#    - Runtime: Python 3
+#    - Build Command: pip install -r requirements.txt
+#    - Start Command: uvicorn main:app --host 0.0.0.0 --port $PORT
+```
+
+**Step 4: Store API key for CI/CD**
+```bash
+# Add to GitHub secrets for CI/CD
+gh secret set RENDER_API_KEY
+
+# Or add to local env
+echo "RENDER_API_KEY=<your-key>" >> .env
+```
+
+**Step 5: Configure render.yaml (optional - Infrastructure as Code)**
+```yaml
+# render.yaml
+services:
+  - type: web
+    name: <project-name>-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: <project-name>-db
+          property: connectionString
+
+databases:
+  - name: <project-name>-db
+    plan: free
+```
+
+### Deployment Checklist Template
+
+Add to project todos when setting up deployment:
+
+```markdown
+## Deployment Setup
+- [ ] Create Git repository (gh repo create)
+- [ ] Choose deployment platform (Vercel/Render/other)
+- [ ] Connect Git to deployment platform
+- [ ] Configure environment variables
+- [ ] Set up CI/CD workflow
+- [ ] Verify preview deployments work
+- [ ] Configure production domain
+```
+
+---
+
 ## Tooling Anti-Patterns
 
 - ❌ Hardcoded secrets - use CLI env management or GitHub secrets
