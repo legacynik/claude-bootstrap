@@ -110,7 +110,7 @@ Define before you build:
 2. **Atomic todos** with validation criteria and test cases
 3. **Move, don't delete** - Completed todos go to `completed.md` for reference
 
-## Skills Included (23 Skills)
+## Skills Included (24 Skills)
 
 ### Core Skills
 | Skill | Purpose |
@@ -137,6 +137,7 @@ Define before you build:
 | `ui-mobile.md` | Mobile UI - React Native, iOS/Android patterns, touch targets |
 | `ui-testing.md` | Visual testing - catch invisible buttons, broken layouts, contrast |
 | `playwright-testing.md` | E2E testing - Playwright, Page Objects, cross-browser, CI/CD |
+| `user-journeys.md` | User experience flows - journey mapping, UX validation, error recovery |
 
 ### AI & Agentic Skills
 | Skill | Purpose |
