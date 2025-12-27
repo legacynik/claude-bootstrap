@@ -110,7 +110,7 @@ Define before you build:
 2. **Atomic todos** with validation criteria and test cases
 3. **Move, don't delete** - Completed todos go to `completed.md` for reference
 
-## Skills Included (24 Skills)
+## Skills Included (25 Skills)
 
 ### Core Skills
 | Skill | Purpose |
@@ -153,6 +153,11 @@ Define before you build:
 | `supabase-nextjs.md` | Next.js + Supabase + Drizzle ORM |
 | `supabase-python.md` | FastAPI + Supabase + SQLAlchemy/SQLModel |
 | `supabase-node.md` | Express/Hono + Supabase + Drizzle ORM |
+
+### Content & SEO Skills
+| Skill | Purpose |
+|-------|---------|
+| `web-content.md` | SEO + AI discovery (GEO) - schema, content structure, ChatGPT/Perplexity optimization |
 
 ### Integration Skills
 | Skill | Purpose |
