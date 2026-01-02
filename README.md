@@ -468,9 +468,10 @@ Yes. Skills are markdown files in `.claude/skills/`. Edit or add your own.
 | Category | Supported |
 |----------|-----------|
 | Languages | TypeScript, Python |
-| Frontend | React, Next.js, React Native |
+| Frontend | React, Next.js, React Native, PWA |
 | Backend | Node.js, Express, FastAPI |
 | Database | Supabase, PostgreSQL, Drizzle, Prisma |
+| Web Tech | PWA (Service Workers, Workbox, Offline-First) |
 | E-commerce | Shopify, WooCommerce, Medusa |
 | Marketing | Klaviyo, PostHog |
 
