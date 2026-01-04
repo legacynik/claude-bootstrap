@@ -129,6 +129,34 @@ cp -r /tmp/claude-code/plugins/ralph-wiggum ~/.claude/plugins/
 
 **Atomic commit principle:** If you need "and" to describe your commit, split it.
 
+## Agentic Ad Optimization (Reddit Ads)
+
+**Run automated Reddit ad campaigns with AI-powered optimization.**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  BACKGROUND SERVICE (runs every 4-6 hours)                  │
+├─────────────────────────────────────────────────────────────┤
+│  1. Fetch performance data (CTR, CPA, ROAS)                 │
+│  2. Claude analyzes and recommends actions                  │
+│  3. Auto-execute: pause, scale, adjust bids, rotate ads     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**AI-driven actions:**
+
+| Action | Trigger | Result |
+|--------|---------|--------|
+| `PAUSE` | CTR < 0.3%, no conversions | Stop wasting budget |
+| `SCALE` | CTR > 1%, CPA < target | Increase budget 1.5x |
+| `ADJUST_BID` | Moderate performance | Tweak bids ±10-20% |
+| `ROTATE_CREATIVE` | Declining CTR 3+ days | Flag for new creative |
+
+**Deploy as Docker service:**
+```bash
+docker-compose up -d reddit-ads-optimizer
+```
+
 ## What Gets Created
 
 ```
@@ -289,7 +317,7 @@ Define before you build:
 |-------|---------|
 | `web-payments.md` | Stripe Checkout, subscriptions, webhooks, customer portal |
 | `reddit-api.md` | Reddit API with PRAW (Python) and Snoowrap (Node.js) |
-| `reddit-ads.md` | Reddit Ads API - campaigns, ad groups, ads, targeting, conversions, custom audiences |
+| `reddit-ads.md` | Reddit Ads API - campaigns, targeting, conversions + **agentic optimization service** |
 | `posthog-analytics.md` | PostHog analytics, event tracking, feature flags, project-specific dashboards |
 | `shopify-apps.md` | Shopify app development - Remix, Admin API, checkout extensions, GDPR compliance |
 | `woocommerce.md` | WooCommerce REST API - products, orders, customers, webhooks |
