@@ -198,6 +198,50 @@ docker-compose up -d reddit-ads-optimizer
 
 **Integration:** Pre-push hooks, GitHub Actions, and CI/CD pipelines automatically run code review.
 
+## Team Coordination (Multi-Person Projects)
+
+**When multiple devs use Claude Code on the same repo, coordination is essential.**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  /check-contributors                                        │
+├─────────────────────────────────────────────────────────────┤
+│  Detects: Solo or team project?                             │
+│  Shows: Who's working on what right now                     │
+│  Converts: Solo → Team with full state management           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Team structure created:**
+```
+_project_specs/team/
+├── state.md           # Who's active, claimed todos, conflicts
+├── contributors.md    # Team members, ownership, focus areas
+└── handoffs/          # Notes when passing work to others
+```
+
+**How it works:**
+
+| Feature | Purpose |
+|---------|---------|
+| **Todo claiming** | Claim before starting - prevents duplicate work |
+| **Active sessions** | See who's working on what files right now |
+| **Conflict watch** | Warns when multiple people touch same area |
+| **Handoff notes** | Pass context when handing off work |
+| **Decision sync** | Shared decisions.md - check before deciding |
+
+**Workflow:**
+```
+Start session → Pull → Check state.md → Claim todo → Work → Update state → Push
+```
+
+**Quick commands:**
+```bash
+/check-contributors          # Check state, offer conversion
+/check-contributors --status # Quick status only
+/check-contributors --team   # Convert to team project
+```
+
 ## What Gets Created
 
 ```
