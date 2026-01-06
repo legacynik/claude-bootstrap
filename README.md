@@ -157,6 +157,36 @@ cp -r /tmp/claude-code/plugins/ralph-wiggum ~/.claude/plugins/
 docker-compose up -d reddit-ads-optimizer
 ```
 
+## Code Reviews (Mandatory Guardrail)
+
+**Every commit and deployment requires code review. No exceptions.**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  WORKFLOW: Code → Test → Review → Fix → Commit             │
+├─────────────────────────────────────────────────────────────┤
+│  Run: /code-review                                          │
+│  Plugin: code-review@claude-plugins-official                │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Severity levels:**
+
+| Level | Action | Can Commit? |
+|-------|--------|-------------|
+| 🔴 Critical | Must fix now | ❌ NO |
+| 🟠 High | Must fix now | ❌ NO |
+| 🟡 Medium | Fix soon | ✅ YES |
+| 🟢 Low | Nice to have | ✅ YES |
+
+**What it catches:**
+- Security vulnerabilities (SQL injection, XSS, secrets)
+- Performance issues (N+1 queries, memory leaks)
+- Architecture problems (coupling, SOLID violations)
+- Code quality (complexity, duplication, missing types)
+
+**Integration:** Pre-commit hooks, GitHub Actions, and CI/CD pipelines automatically run code review.
+
 ## What Gets Created
 
 ```
@@ -257,13 +287,14 @@ Define before you build:
 2. **Atomic todos** with validation criteria and test cases
 3. **Move, don't delete** - Completed todos go to `completed.md` for reference
 
-## Skills Included (38 Skills)
+## Skills Included (39 Skills)
 
 ### Core Skills
 | Skill | Purpose |
 |-------|---------|
 | `base.md` | Universal patterns, constraints, TDD workflow, atomic todos |
 | `iterative-development.md` | Ralph Wiggum loops - self-referential TDD iteration until tests pass |
+| `code-review.md` | Mandatory code reviews via `/code-review` before every commit and deploy |
 | `commit-hygiene.md` | Atomic commits, PR size limits, commit thresholds, stacked PRs |
 | `security.md` | OWASP patterns, secrets management, security testing |
 | `credentials.md` | Centralized API key management from Access.txt |
