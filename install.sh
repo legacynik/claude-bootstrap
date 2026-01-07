@@ -34,37 +34,15 @@ echo "✓ Installed git hooks (templates)"
 cp "$SCRIPT_DIR/scripts/install-hooks.sh" "$CLAUDE_DIR/" 2>/dev/null || true
 chmod +x "$CLAUDE_DIR/install-hooks.sh" 2>/dev/null || true
 
-# Install Ralph Wiggum plugin (iterative loops)
+# Check for Ralph Loop plugin
 echo ""
-echo "Checking Ralph Wiggum plugin..."
-if [ -d "$CLAUDE_DIR/plugins/ralph-wiggum" ]; then
-    echo "✓ Ralph Wiggum plugin already installed"
+if [ -d "$CLAUDE_DIR/plugins/marketplaces/claude-plugins-official/plugins/ralph-loop" ]; then
+    echo "✓ Ralph Loop plugin available in marketplace"
+    echo "  To install: /install-plugin ralph-loop (in Claude Code)"
 else
-    echo "Installing Ralph Wiggum plugin (iterative TDD loops)..."
-    if command -v git &> /dev/null; then
-        TEMP_DIR=$(mktemp -d)
-        if git clone --depth 1 --filter=blob:none --sparse https://github.com/anthropics/claude-code.git "$TEMP_DIR" 2>/dev/null; then
-            cd "$TEMP_DIR"
-            git sparse-checkout set plugins/ralph-wiggum 2>/dev/null || true
-            if [ -d "$TEMP_DIR/plugins/ralph-wiggum" ]; then
-                cp -r "$TEMP_DIR/plugins/ralph-wiggum" "$CLAUDE_DIR/plugins/"
-                echo "✓ Ralph Wiggum plugin installed"
-            else
-                echo "⚠ Ralph Wiggum plugin not found in repo"
-                echo "  Manual install: https://github.com/anthropics/claude-code/tree/main/plugins"
-            fi
-            cd - > /dev/null
-        else
-            echo "⚠ Could not clone claude-code repo"
-            echo "  Manual install: git clone https://github.com/anthropics/claude-code.git /tmp/claude-code"
-            echo "                  cp -r /tmp/claude-code/plugins/ralph-wiggum ~/.claude/plugins/"
-        fi
-        rm -rf "$TEMP_DIR"
-    else
-        echo "⚠ Git not found. Install Ralph Wiggum manually:"
-        echo "  git clone https://github.com/anthropics/claude-code.git /tmp/claude-code"
-        echo "  cp -r /tmp/claude-code/plugins/ralph-wiggum ~/.claude/plugins/"
-    fi
+    echo "⚠ Ralph Loop plugin not found in marketplace"
+    echo "  Update marketplace: /update-marketplace (in Claude Code)"
+    echo "  Then install: /install-plugin ralph-loop"
 fi
 
 echo ""
