@@ -96,6 +96,110 @@ Agenti specializzati per ruoli diversi.
 - `*workflow-standard` → Feature (~15 min)
 - `*workflow-enterprise` → Feature complessa (~30 min)
 
+### Comandi: / vs *
+
+| Prefisso | Sistema | Quando usare |
+|----------|---------|--------------|
+| `/comando` | Claude Bootstrap | Review, setup, tools |
+| `*comando` | BMAD-METHOD | Agenti specializzati |
+
+**Slash commands (Bootstrap):**
+```
+/initialize-project    → Setup iniziale progetto
+/code-review          → Review prima di commit
+/setup-full-stack     → Aggiungi BMAD + Archon
+```
+
+**Asterisk commands (BMAD):**
+```
+*workflow-init        → "Che tipo di task è?" (ti guida)
+*pm                   → "Definisci i requisiti di questa feature"
+*architect            → "Progetta l'architettura"
+*dev                  → "Implementa seguendo il design"
+*qa                   → "Crea test plan e verifica coverage"
+*security             → "Analizza vulnerabilità"
+```
+
+---
+
+## Esempi Pratici
+
+### Esempio 1: Nuova Feature "Login con Google"
+
+```
+Tu: "Voglio aggiungere login con Google"
+
+# Step 1: Definisci requisiti
+*pm
+> "Definisci requisiti per OAuth Google login"
+
+Claude (*pm):
+- Redirect a Google
+- Callback handler
+- Salva utente in DB
+- Gestisci token refresh
+
+# Step 2: Progetta
+*architect
+> "Progetta il flusso OAuth"
+
+Claude (*architect):
+- Endpoint /auth/google
+- Endpoint /auth/google/callback
+- Tabella users con google_id
+- Middleware di autenticazione
+
+# Step 3: Cerca docs
+Tu: "Query Context7 for NextAuth Google provider"
+
+# Step 4: Implementa
+*dev
+> "Implementa OAuth Google seguendo il design"
+
+# Step 5: Verifica
+- Claude avvia l'app
+- Claude testa il flusso manualmente
+- ./scripts/preflight.sh
+- /code-review
+
+# Step 6: Commit
+```
+
+### Esempio 2: Bug Fix "Login fallisce su Safari"
+
+```
+Tu: "Il login non funziona su Safari"
+
+# Workflow veloce
+*workflow-quick
+
+Claude:
+1. Riproduce il bug (apre Safari)
+2. Identifica causa (cookie SameSite)
+3. Scrive test che fallisce
+4. Fixa
+5. Test passa
+6. Verifica manuale su Safari
+7. /code-review
+8. Commit
+```
+
+### Esempio 3: Refactor Complesso
+
+```
+Tu: "Voglio riscrivere il sistema di pagamenti"
+
+# Workflow enterprise (più strutturato)
+*workflow-enterprise
+
+*pm → Requisiti dettagliati
+*architect → Design completo
+*security → Threat modeling (PCI compliance)
+*dev → Implementazione step by step
+*qa → Test plan completo
+/code-review → Review approfondito
+```
+
 ### 3. MCP Servers
 
 | Server | Uso | Comando |
