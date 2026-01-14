@@ -1,6 +1,35 @@
-# Claude Bootstrap
+# Claude Bootstrap (Extended Fork)
 
 > An opinionated project initialization system for Claude Code. **TDD-first, iterative loops, security-first, AI-native.**
+
+---
+
+## Fork Info
+
+This is an **extended fork** of [alinaqi/claude-bootstrap](https://github.com/alinaqi/claude-bootstrap) with additional integrations:
+
+| Integration | What it adds |
+|-------------|--------------|
+| **BMAD-METHOD** | 21 specialized agents (`*pm`, `*dev`, `*qa`, `*architect`...) with structured workflows |
+| **Context7** | MCP server for public library documentation (already active in Claude Code) |
+| **Archon** (optional) | Private knowledge base with RAG for your own docs/wiki |
+| **Preflight Script** | Pre-commit checks that BLOCK (secrets, types, lint) |
+| **Real Testing Skill** | Enforces manual verification (unit tests ≠ working feature) |
+| **Code Review Blind Spots** | Warns Claude about authorization bypass, business logic errors |
+
+### Quick Setup (All Integrations)
+
+```bash
+# New or existing project
+cd your-project
+~/.claude-bootstrap/scripts/setup-full-stack.sh
+```
+
+This installs Bootstrap + BMAD + configures Context7 + optional Archon in one command.
+
+See [docs/FULL-STACK-SETUP.md](docs/FULL-STACK-SETUP.md) for complete workflow guide.
+
+---
 
 **The bottleneck has moved from code generation to code comprehension.** AI can generate infinite code, but humans still need to review, understand, and maintain it. Claude Bootstrap provides guardrails that keep AI-generated code simple, secure, and verifiable.
 
