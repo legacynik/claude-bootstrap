@@ -351,6 +351,22 @@ Prioritize review based on change type:
 | Frontend code | XSS, state management, performance |
 | Infrastructure | Secrets, permissions, logging |
 
+### ⚠️ Blind Spots - VERIFICA SEMPRE
+
+Queste categorie sono facili da ignorare. **DEVI controllarle esplicitamente:**
+
+| Categoria | Cosa verificare |
+|-----------|-----------------|
+| **Authorization bypass** | Ogni endpoint: chi può accedere? User A può vedere dati di User B? Role escalation possibile? |
+| **Business logic** | Il codice fa cosa DOVREBBE fare, non solo cosa DICE di fare. Chiediti: ha senso? |
+| **State inconsistency** | Race conditions, ordine operazioni, cosa succede se fallisce a metà? |
+| **Edge cases auth** | Token scaduto, refresh fallito, sessione invalida, permessi revocati |
+
+**Durante code review, per ogni file che tocca auth/permessi:**
+1. Elenca tutti i path di accesso
+2. Per ogni path: chi può chiamarlo? Con quali dati?
+3. Simula: "Se fossi un attaccante, come bypasserei questo check?"
+
 ---
 
 ## Quick Reference
