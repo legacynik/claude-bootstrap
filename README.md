@@ -1,752 +1,300 @@
-# Claude Bootstrap (Extended Fork)
+# Claude DevKit
 
-> An opinionated project initialization system for Claude Code. **TDD-first, iterative loops, security-first, AI-native.**
-
----
-
-## Fork Info
-
-This is an **extended fork** of [alinaqi/claude-bootstrap](https://github.com/alinaqi/claude-bootstrap) with additional integrations:
-
-| Integration | What it adds |
-|-------------|--------------|
-| **BMAD-METHOD** | 21 specialized agents (`*pm`, `*dev`, `*qa`, `*architect`...) with structured workflows |
-| **Context7** | MCP server for public library documentation (already active in Claude Code) |
-| **Archon** (optional) | Private knowledge base with RAG for your own docs/wiki |
-| **Preflight Script** | Pre-commit checks that BLOCK (secrets, types, lint) |
-| **Real Testing Skill** | Enforces manual verification (unit tests ≠ working feature) |
-| **Code Review Blind Spots** | Warns Claude about authorization bypass, business logic errors |
-
-### Quick Setup (All Integrations)
-
-```bash
-# New or existing project
-cd your-project
-~/.claude-bootstrap/scripts/setup-full-stack.sh
-```
-
-This installs Bootstrap + BMAD + configures Context7 + optional Archon in one command.
-
-See [docs/FULL-STACK-SETUP.md](docs/FULL-STACK-SETUP.md) for complete workflow guide.
+> Sistema completo per lo sviluppo con Claude Code. Session tracking, n8n workflow management, BMAD methodology, 46 skill precaricate.
 
 ---
 
-**The bottleneck has moved from code generation to code comprehension.** AI can generate infinite code, but humans still need to review, understand, and maintain it. Claude Bootstrap provides guardrails that keep AI-generated code simple, secure, and verifiable.
+## Cos'e
 
-## Core Philosophy
+Un toolkit che inizializza qualsiasi progetto con:
 
-```
-┌────────────────────────────────────────────────────────────────┐
-│  ITERATIVE LOOPS BY DEFAULT                                    │
-│  ─────────────────────────────────────────────────────────────│
-│  Every task runs in a self-referential loop until tests pass.  │
-│  Claude iterates autonomously. You describe what, not how.     │
-│  Powered by Ralph Wiggum - iteration > perfection.             │
-├────────────────────────────────────────────────────────────────┤
-│  TESTS FIRST, ALWAYS                                           │
-│  ─────────────────────────────────────────────────────────────│
-│  Features: Write tests → Watch them fail → Implement → Pass    │
-│  Bugs: Find test gap → Write failing test → Fix → Pass         │
-│  No code ships without a test that failed first.               │
-├────────────────────────────────────────────────────────────────┤
-│  SIMPLICITY IS NON-NEGOTIABLE                                  │
-│  ─────────────────────────────────────────────────────────────│
-│  20 lines per function │ 200 lines per file │ 3 params max     │
-│  If you can't understand the whole system in one session,      │
-│  it's too complex.                                             │
-├────────────────────────────────────────────────────────────────┤
-│  SECURITY BY DEFAULT                                           │
-│  ─────────────────────────────────────────────────────────────│
-│  No secrets in code │ No secrets in client env vars            │
-│  Dependency scanning │ Pre-commit hooks │ CI enforcement       │
-├────────────────────────────────────────────────────────────────┤
-│  CODE REVIEWS ARE MANDATORY                                    │
-│  ─────────────────────────────────────────────────────────────│
-│  Every commit requires /code-review before push.               │
-│  🔴 Critical + 🟠 High = blocked │ 🟡 Medium + 🟢 Low = can ship │
-│  AI catches what humans miss. Humans catch what AI misses.     │
-└────────────────────────────────────────────────────────────────┘
-```
+- **Session management** - Stato persistente tra sessioni (`/start`, `/update`, `/end`)
+- **Sprint tracking** - YAML-based con decision matrix automatica
+- **n8n integration** - Debug workflow strutturato, [DEV] copy manager, sync automatico
+- **CLAUDE.md strutturato** - Regole, checkpoints obbligatori, decision matrix
+- **46 skill globali** - TDD, code review, debugging, UI, backend, AI patterns
+- **BMAD workflows** - 35 workflow per planning, architecture, testing, retrospective
+- **shadcn MCP** - Frontend component-first (cerca prima di scrivere)
+- **Documentazione** - Template per frontend, backend, n8n development
 
-## Why This Exists
-
-After hundreds of AI-assisted projects across Node, React, Python, and React Native, patterns emerged:
-
-1. **Engineers struggle with Claude Code not because of the tool, but because of how they instruct it** - The delta is in the guardrails
-2. **Complexity has a ceiling** - There's a point where AI loses coherent understanding of the system. That's a signal, not a failure
-3. **Restart is a feature, not failure** - When fixing something increases complexity, restart with learnings. Each iteration is faster
-
-This toolkit encodes those learnings into reusable skills.
+---
 
 ## Quick Start
 
 ```bash
-# Clone and install
-git clone https://github.com/alinaqi/claude-bootstrap.git ~/.claude-bootstrap
-cd ~/.claude-bootstrap && ./install.sh
+# Installa (una volta)
+git clone https://github.com/legacynik/claude-devkit.git ~/.claude-devkit
+cd ~/.claude-devkit && ./install.sh
 
-# In any project directory
-claude
-> /initialize-project
+# Inizializza qualsiasi progetto
+cd ~/Projects/my-new-project
+~/.claude-devkit/scripts/setup-full-stack.sh
 ```
 
-Claude will:
-1. **Validate tools** - Check gh, vercel, supabase CLIs
-2. **Ask questions** - Language, framework, AI-first?, database
-3. **Set up repository** - Create or connect GitHub repo
-4. **Create structure** - Skills, security, CI/CD, specs, todos
-5. **Prompt for specs** - Transition to defining first feature
+Lo script chiede:
+1. **Git email** (auto-detect)
+2. **n8n URL + tag** (opzionale - skip per disabilitare)
+3. **GitHub repo** (opzionale)
+4. **Database MCP name** (opzionale)
 
-## Automatic Iterative Loops (Ralph Wiggum)
+---
 
-**You talk naturally. Claude automatically runs iterative TDD loops.**
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  You say: "Add email validation to signup"                  │
-├─────────────────────────────────────────────────────────────┤
-│  Claude automatically:                                       │
-│  1. Extracts requirements from your request                 │
-│  2. Structures as TDD loop with completion criteria         │
-│  3. Runs /ralph-loop with tests as exit condition           │
-│  4. Iterates until all tests pass + lint clean              │
-└─────────────────────────────────────────────────────────────┘
-```
-
-No need to manually invoke `/ralph-loop`. Just describe what you want:
-
-| You Say | Claude Does |
-|---------|-------------|
-| "Add user authentication" | Loops until auth tests pass |
-| "Fix the login bug" | Finds test gap → writes test → loops until fixed |
-| "Build a REST API for todos" | Loops until all endpoint tests pass |
-| "Refactor the auth module" | Loops with tests as safety net |
-
-**Opt-out phrases** (for when you don't want loops):
-- "Just explain..." → explanation only
-- "Quick fix..." → one-liner, no loop
-- "Don't loop..." → explicit opt-out
-
-### Setup Ralph Wiggum Plugin
-
-```bash
-# Install from official marketplace (in Claude Code)
-/plugin install ralph-loop@claude-plugins-official
-```
-
-**Troubleshooting: "Source path does not exist: .../ralph-wiggum"**
-
-The plugin was renamed from `ralph-wiggum` to `ralph-loop` in the marketplace. If you see this error, the cache references the old name but the plugin folder uses the new name. Fix with a symlink:
-
-```bash
-ln -s ~/.claude/plugins/marketplaces/claude-plugins-official/plugins/ralph-loop \
-      ~/.claude/plugins/marketplaces/claude-plugins-official/plugins/ralph-wiggum
-```
-
-Then retry `/plugin install ralph-loop@claude-plugins-official`.
-
-## Commit Hygiene (Automatic PR Size Management)
-
-**Claude monitors your changes and advises when to commit before PRs become too large.**
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  COMMIT SIZE THRESHOLDS                                     │
-├─────────────────────────────────────────────────────────────┤
-│  🟢 OK:     ≤ 5 files,  ≤ 200 lines                         │
-│  🟡 WARN:   6-10 files, 201-400 lines  → "Commit soon"      │
-│  🔴 STOP:   > 10 files, > 400 lines    → "Commit NOW"       │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Claude automatically checks and advises:**
-
-| Status | Claude Says |
-|--------|-------------|
-| 3 files, 95 lines | ✅ Tests passing. Good time to commit! |
-| 7 files, 225 lines | 💡 Approaching threshold. Consider committing. |
-| 12 files, 400 lines | ⚠️ Changes too large! Commit now. |
-
-**Why this matters:**
-- PRs < 200 lines: 15% defect rate
-- PRs 200-400 lines: 23% defect rate
-- PRs > 400 lines: 40%+ defect rate (rubber-stamped, not reviewed)
-
-**Atomic commit principle:** If you need "and" to describe your commit, split it.
-
-## Agentic Ad Optimization (Reddit Ads)
-
-**Run automated Reddit ad campaigns with AI-powered optimization.**
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  BACKGROUND SERVICE (runs every 4-6 hours)                  │
-├─────────────────────────────────────────────────────────────┤
-│  1. Fetch performance data (CTR, CPA, ROAS)                 │
-│  2. Claude analyzes and recommends actions                  │
-│  3. Auto-execute: pause, scale, adjust bids, rotate ads     │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**AI-driven actions:**
-
-| Action | Trigger | Result |
-|--------|---------|--------|
-| `PAUSE` | CTR < 0.3%, no conversions | Stop wasting budget |
-| `SCALE` | CTR > 1%, CPA < target | Increase budget 1.5x |
-| `ADJUST_BID` | Moderate performance | Tweak bids ±10-20% |
-| `ROTATE_CREATIVE` | Declining CTR 3+ days | Flag for new creative |
-
-**Deploy as Docker service:**
-```bash
-docker-compose up -d reddit-ads-optimizer
-```
-
-## Code Reviews (Mandatory Guardrail)
-
-**Every push requires code review. No exceptions.**
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  WORKFLOW: Code → Test → Commit → Push → Review blocks     │
-├─────────────────────────────────────────────────────────────┤
-│  Run manually: /code-review                                 │
-│  Enforced: Pre-push hook blocks on Critical/High            │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Enable pre-push hook in any project:**
-```bash
-~/.claude/install-hooks.sh
-```
-
-**Severity levels:**
-
-| Level | Action | Can Push? |
-|-------|--------|-----------|
-| 🔴 Critical | Must fix now | ❌ BLOCKED |
-| 🟠 High | Must fix now | ❌ BLOCKED |
-| 🟡 Medium | Fix soon | ✅ Advisory |
-| 🟢 Low | Nice to have | ✅ Advisory |
-
-**What it catches:**
-- Security vulnerabilities (SQL injection, XSS, secrets)
-- Performance issues (N+1 queries, memory leaks)
-- Architecture problems (coupling, SOLID violations)
-- Code quality (complexity, duplication, missing types)
-
-**Integration:** Pre-push hooks, GitHub Actions, and CI/CD pipelines automatically run code review.
-
-## Team Coordination (Multi-Person Projects)
-
-**When multiple devs use Claude Code on the same repo, coordination is essential.**
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  /check-contributors                                        │
-├─────────────────────────────────────────────────────────────┤
-│  Detects: Solo or team project?                             │
-│  Shows: Who's working on what right now                     │
-│  Converts: Solo → Team with full state management           │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Team structure created:**
-```
-_project_specs/team/
-├── state.md           # Who's active, claimed todos, conflicts
-├── contributors.md    # Team members, ownership, focus areas
-└── handoffs/          # Notes when passing work to others
-```
-
-**How it works:**
-
-| Feature | Purpose |
-|---------|---------|
-| **Todo claiming** | Claim before starting - prevents duplicate work |
-| **Active sessions** | See who's working on what files right now |
-| **Conflict watch** | Warns when multiple people touch same area |
-| **Handoff notes** | Pass context when handing off work |
-| **Decision sync** | Shared decisions.md - check before deciding |
-
-**Workflow:**
-```
-Start session → Pull → Check state.md → Claim todo → Work → Update state → Push
-```
-
-**Quick commands:**
-```bash
-/check-contributors          # Check state, offer conversion
-/check-contributors --status # Quick status only
-/check-contributors --team   # Convert to team project
-```
-
-## Code Deduplication (Prevent Semantic Bloat)
-
-**AI doesn't copy/paste - it reimplements. The problem is duplicate PURPOSE, not duplicate code.**
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  CHECK BEFORE YOU WRITE                                     │
-├─────────────────────────────────────────────────────────────┤
-│  Before creating ANY new function:                          │
-│  1. Check CODE_INDEX.md for existing capabilities           │
-│  2. Search codebase for similar functionality               │
-│  3. Extend existing if possible                             │
-│  4. Only create new if nothing suitable exists              │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Semantic capability index** (organized by what things DO):
-
-```markdown
-## Validation
-| Function | Location | Does What |
-|----------|----------|-----------|
-| `isEmail()` | utils/validate.ts | Validates email format |
-| `isPhone()` | utils/validate.ts | Validates phone number |
-
-## Date/Time
-| Function | Location | Does What |
-|----------|----------|-----------|
-| `formatRelative()` | utils/dates.ts | "2 days ago" format |
-```
-
-Before writing `validateEmail()`, Claude searches → finds `isEmail()` exists → uses it.
-
-**Commands:**
-```bash
-/update-code-index      # Regenerate index from codebase
-/audit-duplicates       # Find semantic duplicates to merge
-```
-
-**For large codebases (100+ files):** Optional vector DB integration (ChromaDB/LanceDB) for semantic search.
-
-## What Gets Created
+## Cosa viene creato
 
 ```
 your-project/
-├── .claude/skills/           # Coding guardrails
-│   ├── base.md               # Universal patterns
-│   ├── security.md           # Security requirements
-│   ├── [language].md         # Language-specific
-│   └── [framework].md        # Framework-specific
-├── .github/workflows/
-│   ├── quality.yml           # Lint, type-check, test (80% coverage)
-│   └── security.yml          # Secret scanning, dependency audit
-├── _project_specs/
-│   ├── overview.md           # Project vision
-│   ├── features/             # Feature specifications
-│   └── todos/                # Atomic todos with test cases
-├── docs/                     # Technical documentation
+├── CLAUDE.md                          # Regole, decision matrix, checkpoints
+├── PROJECT.md                         # Context progetto (da compilare)
+├── .env                               # Template variabili ambiente
+│
+├── .claude/skills/                    # Skill progetto-specifiche
+│   ├── start/SKILL.md                 # /start - briefing con raccomandazioni
+│   ├── end/SKILL.md                   # /end - finalizza sessione + commit
+│   ├── update/SKILL.md                # /update - checkpoint mid-session
+│   ├── weekly-report/SKILL.md         # /weekly-report - report settimanale
+│   ├── debug/SKILL.md           *     # /debug <exec_id> - debug n8n
+│   ├── test-fix/SKILL.md        *     # /test-fix - valida fix
+│   ├── archivia/SKILL.md        *     # /archivia - archivia debug
+│   ├── cleanup-debug/SKILL.md   *     # /cleanup-debug - pulizia archivio
+│   └── sync-n8n/SKILL.md        *     # /sync-n8n - sync workflow
+│
+├── _project_specs/                    # Stato sessione e sprint
+│   ├── sprint-status.yaml             # Task tracking (single source of truth)
+│   ├── session/
+│   │   ├── current-state.md           # Stato live per context recovery
+│   │   ├── decisions.md               # Log decisioni architetturali
+│   │   ├── daily/                     # Log giornalieri
+│   │   └── weekly/                    # Report settimanali
+│   └── debug/                    *    # Debug state persistente
+│       ├── current-debug.md      *
+│       └── archive/              *
+│
 ├── scripts/
-│   ├── verify-tooling.sh     # CLI validation
-│   └── security-check.sh     # Pre-commit security
-└── CLAUDE.md                 # Claude instructions
+│   ├── git-push-verify.sh             # Push sicuro con verifica
+│   ├── dev-workflow.sh           *    # n8n [DEV] workflow manager
+│   └── sync-workflows.sh        *    # Sync n8n workflows + changelog
+│
+└── docs/
+    ├── frontend-development.md        # shadcn MCP workflow
+    ├── backend-development.md         # Multi-tenancy, DB patterns
+    └── n8n-development.md        *    # MCP skills, debug workflow
+
+* = creato solo se n8n e abilitato
 ```
-
-## Philosophy
-
-### TDD-First Development (Mandatory)
-
-**Every feature and bug fix follows the same pattern:**
-
-| Phase | Feature Development | Bug Fixing |
-|-------|---------------------|------------|
-| **1. RED** | Write tests based on acceptance criteria | Identify test gap, write test that reproduces bug |
-| **2. RUN** | Execute tests → ALL MUST FAIL | Execute test → MUST FAIL (proves it catches bug) |
-| **3. GREEN** | Write minimum code to pass | Fix the bug |
-| **4. RUN** | Execute tests → ALL MUST PASS | Execute test → MUST PASS |
-| **5. VALIDATE** | Lint + TypeCheck + Coverage ≥80% | Full test suite + Lint + TypeCheck |
-
-**Why tests must fail first:**
-- Proves the test actually validates the requirement
-- For bugs: proves the test would have caught it
-- Prevents false confidence from tests that always pass
-
-**Anti-patterns we prevent:**
-- ❌ Fixing bugs without adding a test first
-- ❌ Writing tests after implementation
-- ❌ Marking todos complete with failing tests
-- ❌ Skipping lint/typecheck before completion
-
-### Complexity is the Enemy
-
-Every line of code is a liability. The goal is software simple enough that any engineer (or AI) can understand the entire system in one session.
-
-**Measurable constraints, not vague guidance:**
-
-| Constraint | Limit |
-|------------|-------|
-| Lines per function | 20 max |
-| Parameters per function | 3 max |
-| Nesting depth | 2 levels max |
-| Lines per file | 200 max |
-| Test coverage | 80% minimum |
-
-### Security is Non-Negotiable
-
-- No secrets in code - ever
-- No secrets in `VITE_*` or `NEXT_PUBLIC_*` env vars (client-exposed!)
-- `.env` files always gitignored
-- Dependency scanning on every PR
-- Pre-commit security checks
-
-### Centralized Credentials
-
-Store all your API keys in one file (e.g., `~/Documents/Access.txt`):
-
-```
-OpenAI API: sk-proj-xxx
-Claude API: sk-ant-xxx
-Stripe: sk_test_xxx
-Supabase url: https://xxx.supabase.co
-Anon key: eyJxxx
-```
-
-When starting a project, Claude asks for your access file location, auto-detects keys by pattern, validates them, and creates your `.env`.
-
-### AI-First Architecture
-
-For applications where LLMs handle core logic:
-
-- **LLM for logic, code for plumbing** - Classification, extraction, decisions via LLM; validation, routing, auth via code
-- **Test LLM calls properly** - Mocks for unit tests, fixtures for parsing, evals for accuracy
-- **Track costs** - Monitor token usage and latency
-
-### Spec-Driven Development
-
-Define before you build:
-
-1. **Feature specs** in `_project_specs/features/`
-2. **Atomic todos** with validation criteria and test cases
-3. **Move, don't delete** - Completed todos go to `completed.md` for reference
-
-## Skills Included (44 Skills)
-
-### Core Skills
-| Skill | Purpose |
-|-------|---------|
-| `base.md` | Universal patterns, constraints, TDD workflow, atomic todos |
-| `iterative-development.md` | Ralph Wiggum loops - self-referential TDD iteration until tests pass |
-| `code-review.md` | Mandatory code reviews via `/code-review` before every commit and deploy |
-| `commit-hygiene.md` | Atomic commits, PR size limits, commit thresholds, stacked PRs |
-| `code-deduplication.md` | Prevent semantic duplication with capability index, check-before-write |
-| `team-coordination.md` | Multi-person projects - shared state, todo claiming, handoffs, conflict prevention |
-| `security.md` | OWASP patterns, secrets management, security testing |
-| `credentials.md` | Centralized API key management from Access.txt |
-| `session-management.md` | Context preservation, tiered summarization, resumability |
-| `project-tooling.md` | gh, vercel, supabase, render CLI + deployment platform setup |
-
-### Language & Framework Skills
-| Skill | Purpose |
-|-------|---------|
-| `python.md` | Python + ruff + mypy + pytest |
-| `typescript.md` | TypeScript strict + eslint + jest |
-| `nodejs-backend.md` | Express/Fastify patterns, repositories |
-| `react-web.md` | React + hooks + React Query + Zustand |
-| `react-native.md` | Mobile patterns, platform-specific code |
-| `android-java.md` | Android Java with MVVM, ViewBinding, Espresso testing |
-| `android-kotlin.md` | Android Kotlin with Coroutines, Jetpack Compose, Hilt, MockK/Turbine |
-| `flutter.md` | Flutter with Riverpod, Freezed, go_router, mocktail testing |
-
-### UI Skills
-| Skill | Purpose |
-|-------|---------|
-| `ui-web.md` | Web UI - glassmorphism, Tailwind, dark mode, accessibility |
-| `ui-mobile.md` | Mobile UI - React Native, iOS/Android patterns, touch targets |
-| `ui-testing.md` | Visual testing - catch invisible buttons, broken layouts, contrast |
-| `playwright-testing.md` | E2E testing - Playwright, Page Objects, cross-browser, CI/CD |
-| `user-journeys.md` | User experience flows - journey mapping, UX validation, error recovery |
-| `pwa-development.md` | Progressive Web Apps - service workers, caching strategies, offline, Workbox |
-
-### AI & Agentic Skills
-| Skill | Purpose |
-|-------|---------|
-| `agentic-development.md` | Build AI agents - Pydantic AI (Python), Claude SDK (Node.js) |
-| `llm-patterns.md` | AI-first apps, LLM testing, prompt management |
-| `ai-models.md` | Latest models reference - Claude, OpenAI, Gemini, Eleven Labs, Replicate |
-
-### Database & Backend Skills
-| Skill | Purpose |
-|-------|---------|
-| `database-schema.md` | Schema awareness - read before coding, type generation, prevent column errors |
-| `supabase.md` | Core Supabase CLI, migrations, RLS, Edge Functions |
-| `supabase-nextjs.md` | Next.js + Supabase + Drizzle ORM |
-| `supabase-python.md` | FastAPI + Supabase + SQLAlchemy/SQLModel |
-| `supabase-node.md` | Express/Hono + Supabase + Drizzle ORM |
-
-### Content & SEO Skills
-| Skill | Purpose |
-|-------|---------|
-| `aeo-optimization.md` | AI Engine Optimization - semantic triples, page templates, content clusters for AI citations |
-| `web-content.md` | SEO + AI discovery (GEO) - schema, content structure, ChatGPT/Perplexity optimization |
-| `site-architecture.md` | Technical SEO - robots.txt, sitemap, meta tags, AI crawler handling, Core Web Vitals |
-
-### Integration Skills
-| Skill | Purpose |
-|-------|---------|
-| `web-payments.md` | Stripe Checkout, subscriptions, webhooks, customer portal |
-| `reddit-api.md` | Reddit API with PRAW (Python) and Snoowrap (Node.js) |
-| `reddit-ads.md` | Reddit Ads API - campaigns, targeting, conversions + **agentic optimization service** |
-| `ms-teams-apps.md` | Microsoft Teams bots and AI agents - Claude/OpenAI integration, Adaptive Cards, Graph API |
-| `posthog-analytics.md` | PostHog analytics, event tracking, feature flags, project-specific dashboards |
-| `shopify-apps.md` | Shopify app development - Remix, Admin API, checkout extensions, GDPR compliance |
-| `woocommerce.md` | WooCommerce REST API - products, orders, customers, webhooks |
-| `medusa.md` | Medusa headless commerce - modules, workflows, API routes, admin UI |
-| `klaviyo.md` | Klaviyo email/SMS marketing - profiles, events, flows, segmentation |
-
-## Usage Patterns
-
-### New Project
-```bash
-mkdir my-new-app && cd my-new-app
-claude
-> /initialize-project
-# Answer questions, get full setup
-```
-
-### Existing Project
-```bash
-cd my-existing-app
-claude
-> /initialize-project
-# Skills updated, existing config preserved
-```
-
-### Update Skills Globally
-```bash
-cd ~/.claude-bootstrap
-git pull
-./install.sh
-
-# Then in any project:
-claude
-> /initialize-project
-# Gets latest skills
-```
-
-## Prerequisites
-
-Install and authenticate these CLIs:
-
-```bash
-# GitHub CLI
-brew install gh
-gh auth login
-
-# Vercel CLI
-npm i -g vercel
-vercel login
-
-# Supabase CLI
-brew install supabase/tap/supabase
-supabase login
-```
-
-## Quality Gates
-
-Every project gets automated enforcement:
-
-### Pre-Commit (Local)
-- Linting with auto-fix
-- Type checking
-- Security checks (no secrets, no .env)
-- Unit tests on changed files
-
-### CI (GitHub Actions)
-- Full lint + type check
-- All tests with 80% coverage
-- Secret scanning (trufflehog)
-- Dependency audit (npm audit / safety)
-
-## Atomic Todos
-
-All work is tracked with validation, test cases, and **TDD execution logs**:
-
-```markdown
-## [TODO-042] Add email validation to signup form
-
-**Status:** in-progress
-**Priority:** high
-**Estimate:** S
-
-### Acceptance Criteria
-- [ ] Email field shows error for invalid format
-- [ ] Form cannot submit with invalid email
-
-### Test Cases
-| Input | Expected |
-|-------|----------|
-| user@example.com | Valid |
-| notanemail | Error |
-
-### TDD Execution Log
-| Phase | Command | Result |
-|-------|---------|--------|
-| RED | `npm test -- --grep "email validation"` | 2 tests failed ✓ |
-| GREEN | `npm test -- --grep "email validation"` | 2 tests passed ✓ |
-| VALIDATE | `npm run lint && npm run typecheck && npm test -- --coverage` | Pass, 84% ✓ |
-```
-
-**Bug reports include test gap analysis:**
-
-```markdown
-## [BUG-007] Email validation accepts "user@"
-
-### Test Gap Analysis
-- Existing tests: `signup.test.ts` - only tested valid emails
-- Gap: Missing test for email without domain
-- New test: Add case for partial emails
-
-### TDD Execution Log
-| Phase | Command | Result |
-|-------|---------|--------|
-| DIAGNOSE | `npm test` | All pass (test gap!) |
-| RED | `npm test -- --grep "partial email"` | 1 test failed ✓ |
-| GREEN | `npm test -- --grep "partial email"` | 1 test passed ✓ |
-| VALIDATE | `npm run lint && npm test -- --coverage` | Pass ✓ |
-```
-
-## Error Handling in Loops
-
-**Not all failures are equal. Claude classifies errors before iterating:**
-
-| Error Type | Examples | Claude Fixes? | Action |
-|------------|----------|---------------|--------|
-| **Code Error** | Logic bug, wrong assertion | ✅ Yes | Continue loop |
-| **Access Error** | Missing API key, DB refused | ❌ No | Stop + report |
-| **Environment Error** | Missing package, wrong version | ❌ No | Stop + report |
-
-**When Claude hits an access/environment error:**
-
-```
-🛑 LOOP BLOCKED - Human Action Required
-
-Error: ECONNREFUSED 127.0.0.1:5432
-
-Required Actions:
-1. Start PostgreSQL: brew services start postgresql
-2. Verify connection: psql -U postgres -c "SELECT 1"
-3. Check DATABASE_URL in .env
-
-After fixing, run /ralph-loop again.
-```
-
-**Common blockers and fixes:**
-
-| Error | Cause | Fix |
-|-------|-------|-----|
-| `ECONNREFUSED :5432` | PostgreSQL not running | `brew services start postgresql` |
-| `ECONNREFUSED :6379` | Redis not running | `brew services start redis` |
-| `401 Unauthorized` | Bad API key | Check `.env` file |
-| `MODULE_NOT_FOUND` | Missing package | `npm install` |
 
 ---
 
-## FAQ
+## Session Management
 
-### How is this different from just using Claude Code?
+Il sistema mantiene stato tra sessioni Claude Code tramite file.
 
-Claude Code is powerful but unpredictable without guardrails. Claude Bootstrap adds:
-- **TDD enforcement** - Tests must fail before implementation
-- **Automatic iteration** - Loops until tests pass, not one-shot
-- **Error classification** - Knows when to stop and ask for help
-- **Complexity limits** - Hard caps prevent unmaintainable code
+| Comando | Quando | Cosa fa |
+|---------|--------|---------|
+| `/start` | Inizio sessione | Legge stato, analizza task, raccomanda workflow/skill |
+| `/update` | Mid-session | Salva progresso nel daily log |
+| `/end` | Fine sessione | Finalizza log, aggiorna stato, commit git |
+| `/weekly-report` | Fine settimana | Aggrega daily log in report settimanale |
 
-### Do I need to manually run `/ralph-loop` every time?
+### Come funziona `/start`
 
-No. With Claude Bootstrap skills loaded, Claude **automatically** transforms your requests into iterative TDD loops. Just say "add email validation" and it loops until tests pass.
+1. Legge `current-state.md` + `sprint-status.yaml` + ultimo daily log
+2. Detecta tipo di task (n8n bug, UI, database, feature...)
+3. Applica decision matrix e suggerisce workflow + skill
+4. Output briefing con next steps
 
-### What if I don't want a loop for something?
+### Decision Matrix (auto-detect)
 
-Use opt-out phrases:
-- "Just explain..." → explanation only
-- "Quick fix..." → one-liner
-- "Don't loop..." → explicit opt-out
+| Pattern rilevato | Workflow suggerito | Skill |
+|------------------|--------------------|-------|
+| n8n workflow bug | `/debug <exec_id>` | n8n-mcp-skills (auto) |
+| n8n feature | `dev-workflow.sh create` | n8n-node-configuration |
+| UI component | shadcn MCP search | ui-web |
+| Database change | SQL + DB MCP | multi-tenancy |
+| New feature | bmad-bmm-dev-story | test-driven-development |
+| Quick fix | bmad-bmm-quick-dev | systematic-debugging |
+| Architecture | bmad-bmm-create-architecture | - |
+| Code review | bmad-bmm-code-review | verification-before-completion |
+| Prompt optimization | bmad-bmm-quick-spec + iterate | llm-patterns |
+| Dashboard/analytics | shadcn MCP + quick-dev | ui-web, posthog-analytics |
+| Research | bmad-bmm-research | context7 |
 
-### What if the loop runs forever?
+---
 
-Three safety mechanisms:
-1. **`--max-iterations`** - Hard limit (default 20-30)
-2. **Error classification** - Stops on access/environment errors
-3. **Blocker detection** - Reports when stuck and needs human help
+## n8n Workflow Development
 
-### Does this work with existing projects?
+> Creato solo se fornisci un URL n8n durante setup.
 
-Yes. Run `/initialize-project` in any directory. It adds skills without breaking existing config.
-
-### What about test coverage?
-
-Minimum 80% coverage enforced. CI blocks PRs below threshold.
-
-### How do I update skills?
+### Regola d'oro: MAI editare production direttamente
 
 ```bash
-cd ~/.claude-bootstrap
+# 1. Crea copia [DEV]
+./scripts/dev-workflow.sh create <prod-workflow-id>
+
+# 2. Edita nel UI n8n (link fornito dal comando)
+
+# 3. Testa
+
+# 4. Promuovi a production (con backup + conferma)
+./scripts/dev-workflow.sh promote <dev-id>
+
+# 5. Elimina copia [DEV]
+./scripts/dev-workflow.sh delete <dev-id>
+```
+
+### Debug Workflow strutturato
+
+```
+Dashboard errore → /debug <execution_id>
+    → Popola current-debug.md con dati da DB + n8n
+    → Suggerisce skill n8n appropriata
+
+Investigazione → fix su [DEV] → test
+
+/test-fix
+    → Conferma fix, valuta se decision-worthy
+    → Aggiorna error_log nel DB
+
+/archivia [DEC-XXX]
+    → Archivia in archive/YYYY-MM-DD-NNN.md
+    → Link a decision se significativo
+    → Reset current-debug.md
+```
+
+### Sync Workflows
+
+```bash
+/sync-n8n                    # Sync + commit + changelog
+./scripts/sync-workflows.sh --dry-run   # Preview
+```
+
+Sincronizza tutti i workflow con il tag configurato, aggiorna `changelog-n8n.md`, auto-commit.
+
+---
+
+## 46 Skill Globali
+
+Installate in `~/.claude/skills/` e disponibili in tutti i progetti.
+
+### Superpowers (metodologia)
+
+| Skill | Uso |
+|-------|-----|
+| `using-superpowers` | Inizio conversazione |
+| `brainstorming` | Prima di qualsiasi lavoro creativo |
+| `test-driven-development` | Prima di scrivere codice |
+| `systematic-debugging` | Quando trovi un bug |
+| `verification-before-completion` | Prima di commit/PR |
+| `writing-plans` | Pianificazione multi-step |
+| `executing-plans` | Esecuzione piani |
+| `dispatching-parallel-agents` | Task paralleli |
+| `code-reviewer` | Code review |
+| `writing-skills` | Creare nuove skill |
+
+### Tecnologie
+
+| Categoria | Skill |
+|-----------|-------|
+| **Frontend** | react-web, react-native, ui-web, ui-mobile, ui-testing, pwa-development |
+| **Backend** | nodejs-backend, python, typescript |
+| **Database** | supabase, supabase-nextjs, supabase-node, supabase-python, database-schema |
+| **Mobile** | flutter, android-java, android-kotlin |
+| **AI/LLM** | agentic-development, llm-patterns, ai-models |
+| **Testing** | playwright-testing, iterative-development |
+| **Commerce** | shopify-apps, woocommerce, medusa, web-payments |
+| **Marketing** | klaviyo, posthog-analytics, reddit-ads, reddit-api |
+| **SEO** | aeo-optimization, web-content, site-architecture |
+| **Altro** | ms-teams-apps, security, credentials, code-review, commit-hygiene |
+
+---
+
+## BMAD Workflows
+
+35 workflow strutturati per il ciclo di vita del progetto.
+
+| Fase | Workflow |
+|------|----------|
+| **Discovery** | create-product-brief, research |
+| **Planning** | create-prd, create-architecture, create-ux-design |
+| **Sprint** | sprint-planning, sprint-status, create-story, create-epics-and-stories |
+| **Implementation** | dev-story, quick-dev, quick-spec |
+| **Testing** | test-design, test-review, automate, nfr, ci, trace |
+| **Review** | code-review, check-implementation-readiness |
+| **Retrospective** | retrospective, correct-course |
+| **Agents** | analyst, architect, dev, pm, sm, tea, ux-designer, tech-writer |
+
+---
+
+## CLAUDE.md generato
+
+Il `CLAUDE.md` creato nel progetto include:
+
+- **Communication Principles** - Diretto, cinico, evidence-based
+- **Critical Rules** - Git, multi-tenancy, session tracking, subagent per research
+- **Decision Matrix** - Auto-matching task → workflow → skill
+- **Development Rules** - n8n, frontend (shadcn-first), backend (multi-tenancy)
+- **Mandatory Checkpoints** - 5 punti di controllo obbligatori
+
+### Checkpoints obbligatori
+
+| Checkpoint | Quando | Skill |
+|------------|--------|-------|
+| Start conversazione | Sempre | `using-superpowers` |
+| Lavoro creativo | Prima di feature/component | `brainstorming` |
+| Implementazione | Prima di scrivere codice | `test-driven-development` |
+| Bug trovato | Qualsiasi errore | `systematic-debugging` |
+| Prima di commit | Prima di git commit/PR | `verification-before-completion` |
+
+---
+
+## Struttura Repository
+
+```
+~/.claude-devkit/
+├── install.sh                  # Installer globale
+├── scripts/
+│   └── setup-full-stack.sh     # Project initializer
+├── skills/                     # 46 skill globali
+│   ├── base/
+│   ├── react-web/
+│   ├── python/
+│   └── ...
+├── templates/                  # Template BMAD agents
+│   ├── CLAUDE.md
+│   └── agents/
+├── commands/                   # Comandi Claude Code
+│   ├── initialize-project.md
+│   ├── setup-full-stack.md
+│   ├── check-contributors.md
+│   └── update-code-index.md
+└── hooks/                      # Git hooks
+    └── pre-push
+```
+
+---
+
+## Aggiornamento
+
+```bash
+cd ~/.claude-devkit
 git pull
 ./install.sh
 ```
 
-Then run `/initialize-project` in your project to get latest skills.
-
-### Can I customize the skills?
-
-Yes. Skills are markdown files in `.claude/skills/`. Edit or add your own.
-
-### What languages/frameworks are supported?
-
-| Category | Supported |
-|----------|-----------|
-| Languages | TypeScript, Python, Kotlin, Dart, Java |
-| Frontend | React, Next.js, React Native, Flutter, PWA |
-| Mobile | React Native, Flutter, Android (Java/Kotlin) |
-| Backend | Node.js, Express, FastAPI |
-| Database | Supabase, PostgreSQL, Drizzle, Prisma |
-| Web Tech | PWA (Service Workers, Workbox, Offline-First) |
-| E-commerce | Shopify, WooCommerce, Medusa |
-| Advertising | Reddit Ads API (campaigns, targeting, conversions) |
-| Collaboration | Microsoft Teams (bots, AI agents, Adaptive Cards) |
-| Marketing | Klaviyo, PostHog |
+Le skill globali vengono aggiornate. I progetti esistenti mantengono le loro skill progetto-specifiche.
 
 ---
 
-## Comparison
+## Origini
 
-| Feature | Other Tools | Claude Bootstrap |
-|---------|-------------|------------------|
-| **Testing** | Optional, often skipped | TDD mandatory - tests fail first |
-| **Iteration** | One-shot | Loops until tests pass |
-| **Bug Fixes** | Jump to fix | Test gap analysis → failing test → fix |
-| **Error Handling** | Loop forever | Classifies errors, stops on blockers |
-| **Security** | Rarely covered | First-class with CI enforcement |
-| **Complexity** | Vague guidance | Hard limits (20 lines/function, 200/file) |
+Fork esteso di [alinaqi/claude-bootstrap](https://github.com/alinaqi/claude-bootstrap) con:
+- Session management system completo
+- n8n workflow development lifecycle
+- BMAD methodology integration
+- Setup script parametrizzato
+- Decision matrix automatica
 
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-Key principles:
-- Measurable constraints over vague guidance
-- Working code examples
-- Maintain idempotency
-- Test locally before submitting
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for version history and updates.
-
-**Latest: v2.0.0** - Skills now use folder/SKILL.md structure (breaking change)
+---
 
 ## License
 
 MIT - See [LICENSE](LICENSE)
-
-## Credits
-
-Built on learnings from 100+ projects across customer experience management, agentic AI platforms, mobile apps, and full-stack web applications.
-
----
-
-**Need help scaling AI in your org?** [Claude Code & MCP experts](https://leanai.ventures/aiops/claude)
-
