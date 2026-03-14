@@ -12,9 +12,11 @@ Un toolkit che inizializza qualsiasi progetto con:
 - **Sprint tracking** - YAML-based con decision matrix automatica
 - **n8n integration** - Debug workflow strutturato, [DEV] copy manager, sync automatico
 - **CLAUDE.md strutturato** - Regole, checkpoints obbligatori, decision matrix
-- **46 skill globali** - TDD, code review, debugging, UI, backend, AI patterns
+- **47 skill globali** - TDD, code review, debugging, interface-design, backend, AI patterns
 - **BMAD workflows** - 35 workflow per planning, architecture, testing, retrospective
-- **shadcn MCP** - Frontend component-first (cerca prima di scrivere)
+- **Interface Design** - Intent-driven UI design with craft (dashboards, apps, tools)
+- **Orchestrated Agent Team** - 6-agent TDD pipeline (team-lead, feature, quality, code-review, security, merger)
+- **Quality Gate** - Code quality script with complexity analysis and dead code detection
 - **Documentazione** - Template per frontend, backend, n8n development
 
 ---
@@ -194,7 +196,7 @@ Installate in `~/.claude/skills/` e disponibili in tutti i progetti.
 
 | Categoria | Skill |
 |-----------|-------|
-| **Frontend** | react-web, react-native, ui-web, ui-mobile, ui-testing, pwa-development |
+| **Frontend** | interface-design, react-web, react-native, ui-web, ui-mobile, ui-testing, pwa-development |
 | **Backend** | nodejs-backend, python, typescript |
 | **Database** | supabase, supabase-nextjs, supabase-node, supabase-python, database-schema |
 | **Mobile** | flutter, android-java, android-kotlin |
@@ -258,9 +260,13 @@ Il `CLAUDE.md` creato nel progetto include:
 │   ├── react-web/
 │   ├── python/
 │   └── ...
-├── templates/                  # Template BMAD agents
+├── templates/                  # Template BMAD agents + orchestrated team
 │   ├── CLAUDE.md
 │   └── agents/
+│       ├── orchestrated/       # 6-agent TDD pipeline team
+│       ├── universal/          # General-purpose agents
+│       ├── backend/            # Stack-specific agents
+│       └── frontend/
 ├── commands/                   # Comandi Claude Code
 │   ├── initialize-project.md
 │   ├── setup-full-stack.md

@@ -103,6 +103,32 @@ npm run lint && npm run typecheck && npm test -- --coverage
 | Lines per file | 200 max |
 | Test coverage | 80% minimum |
 
+Run `./scripts/quality-check.sh` before committing for complexity + dead code analysis.
+
+---
+
+## Code Deduplication
+
+Check `CODE_INDEX.md` before writing any new function, hook, type, or utility.
+Update with `/update-code-index` after significant changes.
+
+---
+
+## Subagent for Research (NON-NEGOTIABLE)
+
+- ALL research/lookup operations MUST run in a subagent (Task tool)
+- Includes: DB queries, MCP calls, web search, context7
+- Includes: codebase exploration when reading 3+ files
+- Direct Read/Grep/Glob only for 1-2 specific known files
+
+---
+
+## Prompts & System Text (NON-NEGOTIABLE)
+
+- ALL prompts, system instructions, and LLM directives MUST be in English
+- User-facing output should match the user's language
+- But the prompt that generates it must be English
+
 ---
 
 ## Session Persistence
