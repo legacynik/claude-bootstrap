@@ -261,14 +261,14 @@ description: Session briefing with task recommendations - reads current state, s
 | **n8n feature add** | Contains: workflow name, `new functionality`, `add tool` | `dev-workflow.sh create` + `bmad-bmm-quick-dev` | `n8n-mcp-skills:n8n-node-configuration` | Safe [DEV] workflow testing |
 | **New feature (with story)** | Contains: `implement`, `story file`, structured requirements | `bmad-bmm-dev-story` | `superpowers:test-driven-development` | Story-driven implementation |
 | **Quick fix/update** | Contains: `fix`, `update`, `small change`, no story | `bmad-bmm-quick-dev` | `superpowers:systematic-debugging` (if bug) | Flexible ad-hoc development |
-| **UI component** | Contains: `component`, `UI`, `frontend`, `design` | Search `shadcn` MCP first | `ui-web` | Never write from scratch |
+| **UI component** | Contains: `component`, `UI`, `frontend`, `design` | `/interface-design:init` | `interface-design`, `ui-web` | Intent-first design, then build |
 | **Database change** | Contains: `table`, `migration`, `SQL`, `schema` | Write SQL + test with DB MCP | - | Multi-tenancy critical |
 | **Architecture decision** | Contains: `design`, `architecture`, `approach`, `decision` | `bmad-bmm-create-architecture` or `bmad-party-mode` | - | Complex decisions need design doc |
 | **Code review** | Contains: `review`, `before commit`, `pre-merge` | `bmad-bmm-code-review` (adversarial) | `superpowers:verification-before-completion` | Rigor before production |
 | **Integration task** | Contains: `integrate`, `connect`, `add to workflow` | `bmad-bmm-quick-spec` → `bmad-bmm-quick-dev` | `superpowers:test-driven-development` | Spec first, then implement |
 | **Research/investigation** | Contains: `research`, `investigate`, `understand`, `analyze` | `bmad-bmm-research` or explore manually | `context7` MCP (for lib docs) | Gather data before deciding |
 | **Prompt optimization** | Contains: `prompt`, `optimize`, `improve output` | `bmad-bmm-quick-spec` → iterate | `llm-patterns` | Spec first, iterate with testing |
-| **Dashboard/analytics** | Contains: `dashboard`, `analytics`, `chart`, `metrics` | Search `shadcn` MCP → `bmad-bmm-quick-dev` | `ui-web`, `react-web`, `posthog-analytics` | Component-first development |
+| **Dashboard/analytics** | Contains: `dashboard`, `analytics`, `chart`, `metrics` | `/interface-design:init` → `bmad-bmm-quick-dev` | `interface-design`, `ui-web`, `posthog-analytics` | Intent-first, then implement |
 
 ---
 
@@ -1473,6 +1473,35 @@ chmod +x "$PROJECT_DIR/scripts/git-push-verify.sh"
 
 echo -e "${GREEN}  git-push-verify.sh created${NC}"
 
+# --- quality-check.sh ---
+DEVKIT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [ -f "$DEVKIT_DIR/scripts/quality-check.sh" ]; then
+    cp "$DEVKIT_DIR/scripts/quality-check.sh" "$PROJECT_DIR/scripts/quality-check.sh"
+    chmod +x "$PROJECT_DIR/scripts/quality-check.sh"
+    echo -e "${GREEN}  quality-check.sh created${NC}"
+fi
+
+# --- CODE_INDEX.md ---
+cat > "$PROJECT_DIR/CODE_INDEX.md" << 'CIEOF'
+# Code Index
+
+> Auto-generated catalog of functions, hooks, types, and utilities.
+> Check here before writing new code to avoid duplication.
+> Update with `/update-code-index` after significant changes.
+
+## How to Use
+
+Before creating a new function, hook, type, or utility:
+1. Search this file for similar functionality
+2. If found, reuse or extend the existing implementation
+3. If not found, create it and add an entry here
+
+---
+
+*Run `/update-code-index` to populate this file.*
+CIEOF
+echo -e "${GREEN}  CODE_INDEX.md created${NC}"
+
 # ============================================================================
 # Step 10: Create _project_specs template files
 # ============================================================================
@@ -1665,36 +1694,32 @@ cat > "$PROJECT_DIR/docs/frontend-development.md" << 'FEDOCEOF'
 
 ---
 
-## CRITICAL Rule: shadcn MCP First
+## Design Approach: Intent-Driven with /interface-design
 
-**For ANY UI work, ALWAYS use shadcn MCP BEFORE writing code.**
+**For ANY UI work, start with intent, not components.**
+
+Use the `/interface-design` skill to ensure every interface decision is intentional:
 
 ### Workflow
 
-1. **Search:** `search_items_in_registries({ registries: ['@shadcn'], query: 'button' })`
-2. **View:** `view_items_in_registries({ items: ['@shadcn/button'] })`
-3. **Examples:** `get_item_examples_from_registries({ registries: ['@shadcn'], query: 'button-demo' })`
-4. **Install:** `get_add_command_for_items({ items: ['@shadcn/button'] })`
+1. **Define intent:** Who is the user? What must they accomplish? How should it feel?
+2. **Explore domain:** Product concepts, color world, signature element
+3. **Build with craft:** Apply design principles from the skill
+4. **Save patterns:** Persist to `.interface-design/system.md` for consistency
 
-### NEVER
-- Create a component that exists in shadcn
-- Write custom UI code before searching
+### Commands
 
-### ALWAYS
-- Search shadcn first
-- Check examples before implementing
-- Use get_add_command for installation
+| Command | Purpose |
+|---------|---------|
+| `/interface-design:init` | Start a new interface with intent-first approach |
+| `/interface-design:status` | Show current design system state |
+| `/interface-design:audit` | Check code against design system |
+| `/interface-design:critique` | Critique build for craft, rebuild defaults |
+| `/interface-design:extract` | Extract patterns from existing code |
 
----
+### Component Libraries (Optional)
 
-## Common Components
-
-| Category | Components |
-|----------|-----------|
-| **Forms** | form, input, textarea, select, checkbox, button |
-| **Navigation** | navigation-menu, dropdown-menu, sidebar, breadcrumb |
-| **Data Display** | table, card, accordion, tabs, badge |
-| **Feedback** | alert, toast, dialog, tooltip, progress |
+If your project uses shadcn/ui or another component library, use it as a foundation — but always apply your design system's tokens and patterns on top. Component libraries provide structure; your design system provides identity.
 
 ---
 
@@ -1702,6 +1727,7 @@ cat > "$PROJECT_DIR/docs/frontend-development.md" << 'FEDOCEOF'
 
 | Skill | Purpose |
 |-------|---------|
+| `interface-design` | Intent-driven design for dashboards, apps, tools |
 | `ui-web` | Web UI patterns, Tailwind, dark mode, a11y |
 | `react-web` | React hooks, React Query, Zustand |
 | `ui-mobile` | Mobile patterns, touch targets |
@@ -1879,12 +1905,12 @@ ${N8N_COMMANDS}
 ${N8N_MATRIX}
 | **New feature (story)** | \`bmad-bmm-dev-story\` | test-driven-development | Story-driven impl |
 | **Quick fix/update** | \`bmad-bmm-quick-dev\` | systematic-debugging | Flexible ad-hoc dev |
-| **UI component** | Search \`shadcn\` MCP first | ui-web | Never write from scratch |
+| **UI component** | \`/interface-design:init\` | interface-design, ui-web | Intent-first design |
 | **Database change** | Write SQL + test with DB MCP | - | Multi-tenancy critical |
 | **Architecture decision** | \`bmad-bmm-create-architecture\` | - | Design doc needed |
 | **Code review** | \`bmad-bmm-code-review\` | verification-before-completion | Rigor before prod |
 | **Prompt optimization** | \`bmad-bmm-quick-spec\` + iterate | llm-patterns | Spec first, iterate |
-| **Dashboard/analytics** | shadcn MCP + \`bmad-bmm-quick-dev\` | ui-web, posthog-analytics | Component-first |
+| **Dashboard/analytics** | \`/interface-design:init\` + \`bmad-bmm-quick-dev\` | interface-design, ui-web, posthog-analytics | Intent-first |
 | **Research** | \`bmad-bmm-research\` | context7 MCP | Gather data first |
 
 ---
@@ -1892,14 +1918,27 @@ ${N8N_MATRIX}
 ## Development Rules
 ${N8N_SECTION}
 ### Frontend Development
-**ALWAYS use shadcn MCP** - never write components from scratch.
+**Use \`/interface-design\` for intent-driven UI** — start with who, what, why before building.
 
-1. Search: \`search_items_in_registries\`
-2. View examples: \`get_item_examples_from_registries\`
-3. Install: \`get_add_command_for_items\`
-4. Use component
+1. Define intent (user, task, feel)
+2. Explore domain (concepts, colors, signature)
+3. Build with craft (apply design principles)
+4. Save patterns (\`.interface-design/system.md\`)
+
+Component libraries (shadcn, etc.) are optional foundations — not mandatory.
 
 **See:** \`docs/frontend-development.md\`
+
+### Subagent for Research (NON-NEGOTIABLE)
+- ALL research/lookup operations MUST run in a subagent (Task tool)
+- Includes: DB queries, MCP calls, web search, context7
+- Includes: codebase exploration when reading 3+ files
+- Direct Read/Grep/Glob only for 1-2 specific known files
+
+### Prompts & System Text (NON-NEGOTIABLE)
+- ALL prompts, system instructions, and LLM directives MUST be in English
+- User-facing output should match the user's language
+- But the prompt that generates it must be English
 
 ### Backend Development
 **Multi-tenancy is CRITICAL** - all queries MUST filter by \`user_id\`.
